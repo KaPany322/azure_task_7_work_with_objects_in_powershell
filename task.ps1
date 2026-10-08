@@ -1,12 +1,15 @@
 # Write your code here
 $result = @()
-[string]$version = "Standard_B2pts_v2"
-$regions = Get-ChildItem "data"
-foreach ($region in $regions) {
-    $name = $region.Name
-    $data = Get-Content $region | Where-Object {$_ -match $version}
-    if($data){
-        $result += $name
+[string]$vmSizeName  = "Standard_B2pts_v2"
+
+Get-ChildItem "data" | ForEach-Object {
+    $vmSizes = Get-Content $_.FullName | ConvertFrom-Json
+
+    $match = $vmSizes | Where-Object { $_.Name -eq $vmSizeName }
+
+    if ($match) {
+        $region = $_.Name.Replace(".json", "")
+        $result += $region
     }
 }
 
